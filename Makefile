@@ -64,12 +64,13 @@ SONG_AUTH_CLIENTSECRET := song-app-client-secret
 
 
 # Dont touch!
-PREFIX := SCORE_URL=$(SCORE_URL) \
+DOCKER_COMPOSE_EXE := SCORE_URL=$(SCORE_URL) \
 			SCORE_ACCESS_TOKEN=$(SCORE_ACCESS_TOKEN) \
 			EGO_SERVER_URL=$(EGO_SERVER_URL) \
 			SONG_ACCESS_TOKEN=$(SONG_ACCESS_TOKEN) \
 			SONG_AUTH_CLIENTID=$(SONG_AUTH_CLIENTID) \
-			SONG_AUTH_CLIENTSECRET=$(SONG_AUTH_CLIENTSECRET)
+			SONG_AUTH_CLIENTSECRET=$(SONG_AUTH_CLIENTSECRET) \
+			docker-compose -f docker-compose.rosi.yml
 
 help:
 	@echo
@@ -83,13 +84,26 @@ help:
 	@echo
 
 rosi-help: help
+
+# NOTE: just noticed this annoyance. Must be fixed in next client version
+rosi-ping:
+	@echo "curl --header 'Authorization: Bearer <HIDDEN_ACCESS_TOKEN>" http://localhost:8080/isAlive
+	@curl --header 'Authorization: Bearer $(SONG_ACCESS_TOKEN)' http://localhost:8080/isAlive
+
 rosi-build:
-	@$(PREFIX) docker-compose -f docker-compose.rosi.yml build
+	@$(DOCKER_COMPOSE_EXE) build
 
 rosi-run:
-	@$(PREFIX) docker-compose -f docker-compose.rosi.yml up -d
+	@$(DOCKER_COMPOSE_EXE) up -d
+	@sudo chown -R ${USER}:${USER} ./song-docker-demo/data
+
+rosi-ps:
+	@$(DOCKER_COMPOSE_EXE) ps
+
+rosi-logs:
+	@$(DOCKER_COMPOSE_EXE) logs server
 
 rosi-annihilate:
-	@$(PREFIX) docker-compose -f docker-compose.rosi.yml down -v
+	@$(DOCKER_COMPOSE_EXE) down -v
 
 
