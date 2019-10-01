@@ -1,0 +1,76 @@
+version: '3.4'
+services:
+  base-ubuntu:
+    build: ./song-docker-demo/base-ubuntu
+  base-db:
+    build: ./song-docker-demo/base-db
+    command: echo "do nothing"
+  db:
+    image: "postgres:9.6"
+    environment:
+      POSTGRES_DB: song
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+  server:
+    build:
+      context: ./
+      dockerfile: Dockerfile
+      target: server
+    environment:
+      SPRING_PROFILES_ACTIVE: "prod,secure,default"
+      SERVER_PORT: 8080
+      AUTH_SERVER_URL:  "$EGO_SERVER_URL/api/o/check_token/"
+      SCORE_URL: "$SCORE_URL"
+      SCORE_ACCESSTOKEN: "$SCORE_ACCESS_TOKEN"
+      AUTH_SERVER_CLIENTID: "$SONG_AUTH_CLIENTID"
+      AUTH_SERVER_CLIENTSECRET: "$SONG_AUTH_CLIENTSECRET"
+      AUTH_SERVER_SCOPE_STUDY_PREFIX: PROGRAMDATA-
+      AUTH_SERVER_SCOPE_STUDY_SUFFIX: .WRITE
+      AUTH_SERVER_SCOPE_SYSTEM: song.WRITE
+      MANAGEMENT_SERVER_PORT: 8081
+      ID_REALIDS: "false"
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: password
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db/song?stringtype=unspecified
+      SPRING_FLYWAY_ENABLED: "true"
+      SPRING_FLYWAY_LOCATIONS: "classpath:db/migration"
+    restart: always
+    ports:
+      - "8080:8080"
+    depends_on:
+      - db 
+    volumes:
+      - "./song-docker-demo/logs/server_logs:/opt/dcc/server_logs"
+      - "./song-docker-demo/tools:/opt/dcc/tools"
+  client:
+    build:
+      context: ./
+      dockerfile: Dockerfile
+      target: client
+    network_mode: host
+    environment:
+      AUTH_TOKEN: "$SONG_ACCESS_TOKEN"
+      SERVER_URL: http://localhost:8080
+      CLIENT_STUDY_ID: ABC123-CA
+      CLIENT_DEBUG_ENABLED: "false"
+    depends_on:
+      - base-ubuntu
+      - server
+    volumes:
+      - "./song-docker-demo/data/client:/opt/dcc/data"
+      - "./song-docker-demo/tools:/opt/dcc/tools"
+  storage-client:
+    build: ./song-docker-demo/storage-client
+    network_mode: host
+    environment:
+      AUTH_TOKEN: "$SCORE_ACCESS_TOKEN"
+      SERVER_URL: http://localhost:8080
+      STORAGE_SERVER_URL: "$SCORE_URL"
+    depends_on:
+      - server
+    volumes:
+      - "./song-docker-demo/data/storage-client:/opt/dcc/data"
+      - "./song-docker-demo/tools:/opt/dcc/tools"
+
+volumes:
+    db-data: {}

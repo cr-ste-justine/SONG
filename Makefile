@@ -40,3 +40,56 @@ build-sdk:
 
 clean:
 	@mvn clean
+
+##########################################################################################
+#   Rosi Config - START
+##########################################################################################
+# Score config
+SCORE_URL := https://score.org
+
+#Note: must have score.WRITE scope
+SCORE_ACCESS_TOKEN := 1234234-234234-234234-234234
+
+# ego config
+EGO_SERVER_URL := https://ego.org
+
+# song config
+#Note: must have song.WRITE scope
+SONG_ACCESS_TOKEN := 1234234-234234-234234-234234
+SONG_AUTH_CLIENTID:= song-app-client-id
+SONG_AUTH_CLIENTSECRET := song-app-client-secret
+##########################################################################################
+#   Rosi Config - END
+##########################################################################################
+
+
+# Dont touch!
+PREFIX := SCORE_URL=$(SCORE_URL) \
+			SCORE_ACCESS_TOKEN=$(SCORE_ACCESS_TOKEN) \
+			EGO_SERVER_URL=$(EGO_SERVER_URL) \
+			SONG_ACCESS_TOKEN=$(SONG_ACCESS_TOKEN) \
+			SONG_AUTH_CLIENTID=$(SONG_AUTH_CLIENTID) \
+			SONG_AUTH_CLIENTSECRET=$(SONG_AUTH_CLIENTSECRET)
+
+help:
+	@echo
+	@echo "**************************************************************"
+	@echo "                  Rosi Help"
+	@echo "**************************************************************"
+	@echo "To dry-execute a target run: make -n <target> "
+	@echo
+	@echo "Available Targets: "
+	@grep '^[A-Za-z][A-Za-z0-9_-]\+:.*' ./Makefile | sed 's/:.*//' | sed 's/^/\t/' | grep "rosi"
+	@echo
+
+rosi-help: help
+rosi-build:
+	@$(PREFIX) docker-compose -f docker-compose.rosi.yml build
+
+rosi-run:
+	@$(PREFIX) docker-compose -f docker-compose.rosi.yml up -d
+
+rosi-annihilate:
+	@$(PREFIX) docker-compose -f docker-compose.rosi.yml down -v
+
+
