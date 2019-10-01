@@ -16,12 +16,10 @@
  */
 package bio.overture.song.sdk;
 
-import static java.lang.Boolean.parseBoolean;
-
 import bio.overture.song.core.model.Analysis;
 import bio.overture.song.core.model.AnalysisType;
 import bio.overture.song.core.model.ExportedPayload;
-import bio.overture.song.core.model.File;
+import bio.overture.song.core.model.FileDTO;
 import bio.overture.song.core.model.FileData;
 import bio.overture.song.core.model.FileUpdateResponse;
 import bio.overture.song.core.model.PageDTO;
@@ -29,12 +27,15 @@ import bio.overture.song.core.model.SubmitResponse;
 import bio.overture.song.sdk.model.ListAnalysisTypesRequest;
 import bio.overture.song.sdk.web.Endpoint;
 import bio.overture.song.sdk.web.RestClient;
-import java.util.List;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.val;
 import org.springframework.web.client.RestClientException;
+
+import java.util.List;
+
+import static java.lang.Boolean.parseBoolean;
 
 @RequiredArgsConstructor
 public class SongApi {
@@ -53,10 +54,10 @@ public class SongApi {
     return restClient.post(url, json, SubmitResponse.class).getBody();
   }
 
-  public List<File> getAnalysisFiles(@NonNull String studyId, @NonNull String analysisId) {
+  public List<FileDTO> getAnalysisFiles(@NonNull String studyId, @NonNull String analysisId) {
     checkServerAlive();
     val url = endpoint.getAnalysisFiles(studyId, analysisId);
-    return restClient.getList(url, File.class).getBody();
+    return restClient.getList(url, FileDTO.class).getBody();
   }
 
   public Analysis getAnalysis(@NonNull String studyId, @NonNull String analysisId) {
