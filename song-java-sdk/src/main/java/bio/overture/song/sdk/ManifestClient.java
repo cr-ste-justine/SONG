@@ -1,23 +1,22 @@
 package bio.overture.song.sdk;
 
+import static bio.overture.song.core.utils.FileIO.checkDirectoryExists;
+import static bio.overture.song.sdk.errors.ManifestClientException.checkManifest;
+import static java.nio.file.Files.exists;
+import static java.nio.file.Paths.get;
+import static java.util.stream.Collectors.toList;
+
 import bio.overture.song.core.model.File;
 import bio.overture.song.sdk.model.Manifest;
 import bio.overture.song.sdk.model.ManifestEntry;
 import com.google.common.base.Joiner;
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
-import lombok.val;
-
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
-
-import static java.nio.file.Files.exists;
-import static java.nio.file.Paths.get;
-import static java.util.stream.Collectors.toList;
-import static bio.overture.song.core.utils.FileIO.checkDirectoryExists;
-import static bio.overture.song.sdk.errors.ManifestClientException.checkManifest;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
+import lombok.val;
 
 @RequiredArgsConstructor
 public class ManifestClient {
