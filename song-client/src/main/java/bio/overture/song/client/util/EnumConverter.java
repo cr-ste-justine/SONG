@@ -23,7 +23,7 @@ public abstract class EnumConverter<E extends Enum<E>> implements IStringConvert
             () ->
                 new ParameterException(
                     format(
-                        "Value '%s' cannot be converter to %s. Available values are: [%s]",
+                        "Value '%s' cannot be converted to %s. Available values are: [%s]",
                         value, getEnumClass().getSimpleName(), COMMA.join(enumSet))));
   }
 }
