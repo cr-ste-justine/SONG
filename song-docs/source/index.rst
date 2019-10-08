@@ -6,11 +6,11 @@ SONG Documentation
     :maxdepth: 4
 
     introduction.rst
-    user_access.rst
     score-client.rst
     server.rst
     docker.rst
     sdk/index.rst
+    existing-instances.rst
     faq.rst
 
 ..    api.rst

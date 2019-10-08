@@ -35,7 +35,7 @@ SONG is one of many products provided by `Overture <https://overture.bio>`_ and 
 Features
 ======================
 
-- Synchronous and asynchronous metadata validation using `JsonSchema <http://json-schema.org>`_
+- Synchronous metadata validation using `JsonSchema <http://json-schema.org>`_
 - Strictly enforced data relationships and fields
 - Optional schema-less JSON info fields for user specific metadata
 - Standard REST API that is easy to understand and work with
@@ -44,78 +44,26 @@ Features
 - Clear and concise error handling
 - ACL security using OAuth2 and scopes based on study codes
 - Unifies metadata with object data stored in SCORE
-- Built-in `Swagger UI <https://song.cancercollaboratory.org/swagger-ui.html>`_ for API interaction
+- Built-in `Swagger UI <https://song.qa.overture.bio/api-docs>`_ for API interaction
+- Register and validate against user-defined analysis types
 
 .. _intro_data_sub_workflow_ref:
 
 Data Submission Workflow
 ======================================
 
-The data submission workflow can be separated into 4 main stages:
+The data submission workflow can be separated into 3 main stages:
 
-1. Metadata Upload (SONG)
-2. Metadata Saving (SONG)
-3. Object data Upload (SCORE)
-4. Publishing Metadata (SONG)
+1. Metadata Submission and Validation (SONG)
+2. Object data Upload (SCORE)
+3. Publishing Metadata (SONG)
 
 
 The following diagram summarized the steps involved in successful data submission using SONG and SCORE:
 
 .. image:: song-workflow.svg
-   :width: 75%
+   :width: 50%
    :align: center
-
-
-.. _intro_projects_user_song_ref:
-
-Projects Using SONG
-======================
-
-.. generated at https://staticmapmaker.com/google/
-
-.. image:: song_projects_static_map.png
-.. .. image:: https://maps.googleapis.com/maps/api/staticmap?autoscale=false&size=600x300&maptype=roadmap&format=png&visual_refresh=true&markers=size:mid%7Ccolor:0xff0000%7Clabel:1%7CToronto&markers=size:mid%7Ccolor:0xffb100%7Clabel:2%7CVirginia&markers=size:mid%7Ccolor:0x0a00ff%7Clabel:3%7CBerlin&markers=size:mid%7Ccolor:0x00d70b%7Clabel:4%7CHeidelberg
-
-.. .. image:: https://maps.googleapis.com/maps/api/staticmap?autoscale=false&size=600x300&maptype=roadmap&format=png&visual_refresh=true&markers=size:mid%7Ccolor:0xff0000%7Clabel:1%7CToronto&markers=size:mid%7Ccolor:0xffb100%7Clabel:2%7CVirginia
-
-.. .. image:: https://maps.googleapis.com/maps/api/staticmap?autoscale=2&size=600x300&maptype=roadmap&format=png&visual_refresh=true&markers=size:mid%7Ccolor:0xff0000%7Clabel:2%7CAWS+Virginia&markers=size:mid%7Ccolor:0xff0000%7Clabel:1%7CCancer+Collaboratory+Toronto
-
-**Legend**:
-
-.. raw:: html
-
-    <ul style="list-style-type:none" >
-        <li>
-            <strong>
-                <font color="red">
-                    Cancer Collaboratory - Toronto
-                </font>
-            </strong>: <a href="https://song.cancercollaboratory.org">song.cancercollaboratory.org</a>
-        </li>
-        <li>
-            <strong>
-                <font color="orange">
-                    AWS - Virginia
-                </font>
-            </strong>: <a href="https://virginia.song.icgc.org">virginia.song.icgc.org</a>
-        </li>
-        <!-- Only add back in when both servers are live
-        <li>
-            <strong>
-                <font color="blue">
-                    DKFZ - Berlin
-                </font>
-            </strong> 
-        </li>
-        <li>
-            <strong>
-                <font color="green">
-                    DKFZ - Heidelberg
-                </font>
-            </strong>
-        </li>
-        -->
-    </ul>
 
 
 Getting Started
@@ -131,7 +79,7 @@ Refer to the :ref:`Docker for SONG <docker_for_song_ref>` documentation.
 
 Tutorial using the Python SDK with SONG
 -------------------------------------------
-The :ref:`SONG Python SDK Tutorial <sdk_python_tutorial_ref>` is a Python client module that is used to interact with a running SONG server. Use it with one of the :ref:`Projects Using SONG <_intro_projects_using_song_ref>`, or in combination with :ref:`Docker for SONG <docker_for_song_ref>`. For more information to about the Python SDK, refer to the :ref:`SONG Python SDK <song_python_sdk_ref>` documentation.
+The :ref:`SONG Python SDK Tutorial <sdk_python_tutorial_ref>` is a Python client module that is used to interact with a running SONG server. Use it with one of the :ref:`existing instances <existing_instances_ref>`, or in combination with :ref:`Docker for SONG <docker_for_song_ref>`. For more information to about the Python SDK, refer to the :ref:`SONG Python SDK <song_python_sdk_ref>` documentation.
 
 ..
     Play with a CLI
@@ -140,13 +88,7 @@ The :ref:`SONG Python SDK Tutorial <sdk_python_tutorial_ref>` is a Python client
 
 Play with the REST API from your browser
 --------------------------------------------
-If you want to play with SONG from your browser, simply visit the Swagger UI for each server:
-
-1. **Cancer Collaboratory - Toronto**: https://song.cancercollaboratory.org/swagger-ui.html
-2. **AWS - Virginia**: https://virginia.song.icgc.org/swagger-ui.html
-
-.. seealso::
-    For more information about user access, refer to the :ref:`User Access <user_access_ref>` documentation.
+If you want to play with SONG from your browser, simply visit the Swagger UI (*https://<song-server-url>/api-docs*) in :ref:`Docker for SONG <docker_for_song_ref>` or in one of the :ref:`existing instances <existing_instances_ref>`
 
 Deploy SONG to Production
 ------------------------------
