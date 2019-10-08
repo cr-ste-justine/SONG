@@ -27,13 +27,6 @@ For configuration, after un-archiving the tarball, modify the ``./conf/applicati
 
 where the accessToken has the appropriate scope.
 
-.. note::
-    There are a few storage servers available for DACO users to use, and each has there own required upload scope:
-
-    * In **Collaboratory - Toronto** , the https://storage.cancercollaboratory.org storage servers are used and require ``collab.upload`` scope for uploading files.
-
-    * In **AWS - Virginia** , the https://virginia.cloud.icgc.org storage servers are used and require ``aws.upload`` scope for uploading files.
-
 
 Usage
 ==============

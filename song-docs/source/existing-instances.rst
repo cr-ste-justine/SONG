@@ -6,8 +6,10 @@ Existing Instances
 
 If you want to play with SONG from your browser, simply visit the Swagger UI for each server
 
-Overture.bio
+Overture
 =================
+The Overture SONG server (https://song.qa.overture.bio) is configured to communicate with an Overture SCORE server (https://score.qa.overture.bio) using access tokens managed by the Overture EGO server (https://ego.qa.overture.bio). In order to perform authorized requests, an access token with **song.WRITE** or **song.<studyId>.WRITE** scopes are required.
+
 Swagger UI: https://song.qa.overture.bio/api-docs
 
 ICGC-DCC
@@ -71,7 +73,8 @@ Cancer Collaboratory - Toronto
 -----------------------------------
 Swagger UI: https://song.cancercollaboratory.org/api-docs.
 
-In order to interact with this SONG server, the authorization scope needed is **collab.WRITE** required.
+In order to interact with this SONG server, the authorization scopes **collab.WRITE** or **collab.<studyId>.WRITE** are required. 
+This server is configured to operate with the **Cancer Collaboratory - Toronto** SCORE server (https://storage.cancercollaboratory.org), which requires **collab.WRITE** scope. 
 For more information about user access, refer to the :ref:`ICGC-DCC User Access <icgc_dcc_user_access_ref>` documentation.
 
 
@@ -81,7 +84,8 @@ AWS - Virginia
 --------------------------
 Swagger UI: https://virginia.song.icgc.org/api-docs.
 
-In order to interact with this SONG server, the authorization scope needed is **aws.WRITE** required.  
+In order to interact with this SONG server, the authorization scopes **aws.WRITE** or **aws.<studyId>.WRITE** are required.
+This server is configured to operate with the **AWS - Virginia** SCORE server (https://virginia.storage.icgc.org), which requires **aws.WRITE** scope. 
 For more information about user access, refer to the :ref:`ICGC-DCC User Access <icgc_dcc_user_access_ref>` documentation.
 
 .. _icgc_user_access_ref:
