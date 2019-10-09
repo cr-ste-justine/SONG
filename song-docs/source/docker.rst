@@ -166,7 +166,7 @@ Stage 1:  Payload Submission
     
 .. code-block:: bash
 
-    ./data/client/bin/sing status -p
+    ./data/client/bin/sing ping
 
 2. Submit the example VariantCall payload, which contains the metadata. The response will contain the ``analysisId``
 
