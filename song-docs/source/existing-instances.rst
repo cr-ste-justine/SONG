@@ -75,7 +75,7 @@ Swagger UI: https://song.cancercollaboratory.org/api-docs.
 
 In order to interact with this SONG server, the authorization scopes **collab.WRITE** or **collab.<studyId>.WRITE** are required. 
 This server is configured to operate with the **Cancer Collaboratory - Toronto** SCORE server (https://storage.cancercollaboratory.org), which requires **collab.WRITE** scope. 
-For more information about user access, refer to the :ref:`ICGC-DCC User Access <icgc_dcc_user_access_ref>` documentation.
+For more information about user access, refer to the :ref:`ICGC-DCC User Access <icgc_user_access_ref>` documentation.
 
 
 .. _aws_virginia_ref:

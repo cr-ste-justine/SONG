@@ -159,8 +159,8 @@ This tutorial assumes current working directory is the ``song-docker-demo`` dire
 
 
 
-Stage 1:  SONG Upload
------------------------
+Stage 1:  Payload Submission
+-------------------------------------
 
 1. Check that the SONG server is running
     
@@ -168,44 +168,29 @@ Stage 1:  SONG Upload
 
     ./data/client/bin/sing status -p
 
-2. Upload the example VariantCall payload, which contains the metadata. The response will contain the ``uploadId``
+2. Submit the example VariantCall payload, which contains the metadata. The response will contain the ``analysisId``
 
 .. code-block:: bash
 
-    ./data/client/bin/sing upload -f  ./example/exampleVariantCall.json
-
-3. Check the status of the upload, using the `uploadId``. Ensure the response has the state ``VALIDATED``
-
-.. code-block:: bash
-
-    ./data/client/bin/sing status -u <uploadId>
-
-4. Record or remember the ``uploadId`` from the response for the next phase
+    ./data/client/bin/sing submit -f  ./example/exampleVariantCall.json
 
 
-Stage 2: SONG Saving and Manifest Generation
+Stage 2: Manifest Generation
 --------------------------------------------------
 
-1. Save or commit the finalized metadata. The response will contain the ``analysisId``
-
-.. code-block:: bash
-
-    ./data/client/bin/sing save -u <uploadId>
-
-
-2. Search for the saved analysis, and observe the field ``analysisState`` is set to ``UNPUBLISHED``
+1. Search for the saved analysis, and observe the field ``analysisState`` is set to ``UNPUBLISHED``
 
 .. code-block:: bash
 
     ./data/client/bin/sing search -a <analysisId>
 
-3. Optionally, if you have ``jq`` installed, you can pipe the output of the search, and filter out the ``analysisState`` field
+2. Optionally, if you have ``jq`` installed, you can pipe the output of the search, and filter out the ``analysisState`` field
 
 .. code-block:: bash
 
     ./data/client/bin/sing search -a <analysisId>    |  jq ‘.analysisState’
 
-4. Generate a manifest for the ``score-client`` in :ref:`Stage 3 <stage_3_ref>` with the files located in the `./example` source directory
+3. Generate a manifest for the ``score-client`` in :ref:`Stage 3 <stage_3_ref>` with the files located in the `./example` source directory
 
 .. code-block:: bash
 

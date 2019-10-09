@@ -12,10 +12,9 @@ The following section describes how to install, configure and run the SONG serve
 Prerequisites
 ==================
 
-The following software dependencies are required in order to run the server:
+The following software dependencies are required in order to run the server
 
-- Bash Shell
-- Java 8 or higher
+- Docker
 - Postgres database
 
 .. note::
@@ -26,26 +25,20 @@ The following software dependencies are required in order to run the server:
 Official Releases
 ==================
 
-
-Official SONG releases can be found `here <https://github.com/overture-stack/SONG/releases>`_. The releases follow the `symantic versioning specification <https://semver.org/>`_ and contain notes with a description of the bug fixes, new features or enhancements and breaking changes, as well as links to downloads and change logs. All official song releases are tagged in the format ``$COMPONENT-$VERSION``, where the ``$COMPONENT`` portion follows the regex ``^[a-z-]+$`` and the ``$VERSION`` component follows ``^\d+\.\d+\.\d+$`` . For the SONG server, the tag format has the regex: ``^song-\d+\.\d+\.\d+$``. For example ``song-1.0.0``.
-
-
+Official SONG release notes can be found `here <https://github.com/overture-stack/SONG/releases>`_.
+The release note labels follow the `symantic versioning specification <https://semver.org/>`_ and contain notes with a description of the bug fixes, new features or enhancements, breaking changes, change logs and Docker image tag names. 
+All official SONG release notes are tagged in the format ``$COMPONENT-$VERSION``, where the ``$COMPONENT`` portion follows the regex ``^[a-z-]+$`` and the ``$VERSION`` component follows ``^\d+\.\d+\.\d+$`` . 
+Sing the SONG server is packaged into a docker image, the officially released docker images can be found at https://dockerhub.org/overture/song-server and are tagged in the format ``$VERSION`` where ``$VERSION`` follows ``^\d+\.\d+\.\d+$``.
 
 
 Installation
 ===============================
 
-Once the desired release tag and therefore ``$VERSION`` are known, the corresponding distibution can be downloaded using the command:
+Once the desired release tag and therefore ``$VERSION`` are known, the corresponding docker image can be pulled from dockerhub:
 
 .. code-block:: bash
 
-   curl "https://artifacts.oicr.on.ca/artifactory/dcc-release/bio/overture/song-server/$VERSION/song-server-$VERSION-dist.tar.gz" -Ls -o song-server-$VERSION-dist.tar.gz
-
-This distribution contains the default configuration and jars for running the server. To unarchive, run the command:
-
-.. code-block:: bash
-
-    tar zxvf song-server-$VERSION-dist.tar.gz
+   docker pull overture/song-server:$VERSION
 
 
 Configuration
@@ -53,112 +46,101 @@ Configuration
 
 Server
 ---------------
-By default, the SONG server distribution is configured to run in secure production mode. The server can easily be configured by creating the file ``./conf/application-secure.properties`` with the following contents:
+The SONG server can be configured by defining specific environment variables which must be passed at container creation. The following environment variables are available:
 
 .. code-block:: bash
-
 
    ################################
    #     SONG Server Config       #
    ################################
 
-   server.port=8080
-   management.server.port=8081
+   # Ensure a secure production server
+   SPRING_PROFILES_ACTIVE: prod,secure,default
+   SERVER_PORT: 8080
+   MANAGEMENT_SERVER_PORT: 8081
 
    ################################
    #     OAuth2 Server Config     #
    ################################
 
    # Endpoint to validate OAuth2 tokens
-   auth.server.url=https://auth.icgc.org/oauth/check_token
-
-   auth.server.clientId=<auth-client-id>
-   auth.server.clientSecret=<auth-client-secret>
-
-   # Scope prefix used to authorize requests to the SONG server.
-   # For example, using the configurations below, the User-Agent's
-   # access token would need to have collab.upload scope in order to
-   # complete an authorized request
-
+   AUTH_SERVER_URL:  <auth-server-url>/api/o/check_token/
+   AUTH_SERVER_CLIENTID: <clientId>
+   AUTH_SERVER_CLIENTSECRET: <clientSecret>
 
    # System-level scope prefix and suffix
-   # For example, using the configurations below, the User-Agent's
-   # access token would need to have collab.WRITE scope in order to
+   # For example, using the configuration below, the User-Agent's
+   # access token would need to have song.WRITE scope in order to
    # complete an authorized request
-   auth.server.scope.system=collab.WRITE
+   AUTH_SERVER_SCOPE_SYSTEM: song.WRITE
 
-   # Study-level scope prefix, delimiters and suffix
+   # Study-level scope prefix and suffix
    # For example, using the configurations below, the User-Agent's
-   # access token would need to have collab.<studyId>.WRITE scope in order to
+   # access token would need to have song.<studyId>.WRITE scope in order to
    # complete an authorized request. In general the format of the scope is:
    # <prefix>STUDY_ID<suffix>
-   auth.server.scope.study.prefix=collab.
-   auth.server.scope.study.suffix=.WRITE
+   AUTH_SERVER_SCOPE_STUDY_PREFIX: song-
+   AUTH_SERVER_SCOPE_STUDY_SUFFIX: .WRITE
 
    ################################
    #       ID Server Config       #
    ################################
 
    # URL of the ID server
-   id.idUrl=https://id.icgc.org
+   ID_IDURL: <id-server-url>
 
    # Application level access token used to interact with the ID server. 
    # The access token must have id.create scope
-   id.authToken=<id-server-access-token>
+   ID_AUTHTOKEN: <id-server-access-token>
 
    # Enabled to use an ID server. If false, will use
    # and in-memory id server (use only for testing)
-   id.realIds=true
+   ID_REALIDS: true
 
    ################################
    #   Postgres Database Config   #
    ################################
-
-   spring.datasource.url=jdbc:postgresql://localhost:5432/song?stringtype=unspecified
-   spring.datasource.username=<my-db-username>
-   spring.datasource.password=<my-db-password>
+   SPRING_DATASOURCE_URL: jdbc:postgresql://<db-url>/song?stringtype=unspecified
+   SPRING_DATASOURCE_USERNAME: postgres
+   SPRING_DATASOURCE_PASSWORD: password
 
    # Enable flyway to manage database migrations automatically
-   spring.flyway.enabled=true
-   spring.flyway.locations=classpath:db/migration
+   SPRING_FLYWAY_ENABLED: true
+   SPRING_FLYWAY_LOCATIONS: classpath:db/migration
 
    ################################
-   # SCORe Server Config  #
+   # SCORE Server Config          #
    ################################
 
    # URL used to ensure files exist in the score server
-   score.url=https://storage.cancercollaboratory.org
+   SCORE_URL: <score-server-url>
 
    # Application level access token used internally by the SONG server to download
-   # additional file metadata from the SCORe server. This access token must have the 
-   # correct download scope inorder to download from SCORe. In the case of collab,
-   # it would be collab.download
-   score.accessToken=<score-access-token-with-download-scope>
+   # additional file metadata from the SCORE server. This access token must have the 
+   # correct download scope inorder to download from SCORE,
+   SCORE_ACCESSTOKEN: <score-access-token-with-download-scope>
 
 
-
-The example file above configures the server to use the ``id.icgc.org`` id service, ``auth.icgc.org`` auth service, and the ``storage.cancercollaboratory.org`` SCORe service with a local Postgres database, however any similar service can be used. For example, the :ref:`Docker for SONG Microservice Architecture <docker_microservice_architecture>` uses a different implementation of an OAuth2 server.
+The example file above configures the server to use a read id service, an OAuth2 authorization service, a SCORE service and a Postgres database.
 
 Scope Security Configuration
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 SONG has 2 types of security: **system-level** and **study-level**. **System-level** security is required for any non-study related request, and can be defined via the ``auth.server.scope.system`` property as any string. **Study-level** security is required for any request on a particular study resource and can be defined via the ``auth.server.scope.study.prefix`` and ``auth.server.scope.study.suffix`` properties. For example, by setting the study prefix to ``PROGRAMDATA-`` and the suffix to ``.WRITE``, the required scope for a request associated with the studyId ``ABC123-CA`` would be ``PROGRAMDATA-ABC123-CA.WRITE``.
 
-Database
+Database Migration
 ----------------
 If the user chooses to host their own song server database, it can easily be initialized with a few commands. As of ``song-1.5.0``, SONG server database migrations are managed by `flyway <https://flywaydb.org/getstarted>`_. 
 When upgrading the SONG server version, a flyway migration must be run. 
 
 The following steps show how to create an empty database, and migrate a new or exising database using flyway.
 
-Migrating a Database
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-This scenario is relevant to users installing a SONG server for the first time, or for those upgrading the SONG server to a newer version.
+Creating an empty database
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-If the database doesnt exist yet, a flyway migration can easily be run on a newly created postgres database using the example commands below where, for example, the database user is ``postgres``, password is ``password``, database name is ``song`` and database url is ``http://localhost:8082``
+If the database doesnt exist yet, a flyway migration can easily be run on a newly created postgres database 
+by simply running the SONG server with ``spring.flyway.enabled`` property or ``SPRING_FLYWAY_ENABLED`` environment variable set to ``true``. Upon boot, the server will initialize the empty database.
 
-**1. Create an empty database with password and user**
-
-Skip this step and move to step 2 if the database already exists.
+For example, a database can be created with the user ``postgres``, password ``password``, database name ``song`` and database url ``http://localhost:8082``:
 
 .. code-block:: bash
 
@@ -168,110 +150,136 @@ Skip this step and move to step 2 if the database already exists.
    # Create the password "myNewPassword" for the user "postgres"
    sudo -u postgres psql postgres -c ‘ALTER USER postgres WITH PASSWORD ‘myNewPassword’;
 
-**2. Run a flyway migration on the empty or existing database for a particular SONG server version.**
+If the database already exists, but the SONG server was started with ``spring.flyway.enabled`` set to ``false``, refer to the following step for manually running a flyway migration
 
-This step should be run initially on an empty database or when upgrading the SONG server version. In either case, the same commands should be executed:
+Manually running a flyway migration 
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+This step should be run on an unmigrated or empty database. When upgrading the SONG server version, this step can also be used to manually migrate the database, however it is suggested to just boot the server with the ``spring.flyway.enabled`` property set to ``true`` and let the server automatically run the migration. In either case, the following should be executed:
 
 .. code-block:: bash
 
    # Clone the SONG repository for version "song-X.X.X"
    git clone --branch song-X.X.X https://github.com/overture-stack/song
 
-   # Run the migration on the empty database "song" for version "song-X.X.X"
+   # Run the migration on the database "song" for version "song-X.X.X"
    cd song
    ./mvnw -pl song-server flyway:migrate \
       -Dflyway.url=jdbc:postgresql://localhost:8082/song?stringtype=unspecified \
       -Dflyway.user=postgres \
       -Dflyway.password=password \
       -Dflyway.locations=db/migration
-..
-   1. Create the ``song`` db as the user ``postgres``.
 
-   .. code-block:: bash
-
-       sudo -u postgres psql -c "createdb song"
-
-   2. Create the password for the postgres user.
-
-   .. code-block:: bash
-
-       sudo -u postgres psql postgres -c ‘ALTER USER postgres WITH PASSWORD ‘myNewPassword’;
-
-   3. Download the desired release's song-server jar archive. Refer to :ref:`Official Releases<server_official_releases>` for more information.
-
-   .. code-block:: bash
-
-       wget ‘https://artifacts.oicr.on.ca/artifactory/dcc-release/bio/overture/song-server/$VERSION/song-server-$VERSION.jar’ -O /tmp/song-server.jar
-
-
-   4. Extract the schema.sql from the song-server jar archive.
-
-   .. code-block:: bash
-
-       unzip -p /tmp/song-server.jar  schema.sql > /tmp/schema.sql
-
-   5. Load the schema.sql into the ``song`` db.
-
-   .. code-block:: bash
-
-       sudo -u postgres psql song < /tmp/schema.sql
-
-
-Running as a Service
+Running the server
 ===============================
 
-Although the SONG server distribution could be run as a **standalone** application, it must be manually started or stopped by the user.
-For a long-running server, sudden power loss or a hard reboot would mean the standalone application would need to be restarted manually.
-However, if the SONG server distribution is run as a **service**, the OS would be responsible for automatically restarting the service upon reboot.
-For this reason, the distribution should be configured as a service that is always started on boot.
-
-Linux (SysV)
--------------
-
-Assuming the directory path of the distribution is ``$SONG_SERVER_HOME``, the following steps will register the SONG server 
-as a SysV service on any Linux host supporting SysV and the :ref:`Prerequisites<server_prereq>`, and configure it to start on boot.
+Using docker
+-------------------
+A SONG server can be run manually using the ``docker run`` command with an ``always`` restart policy. Below is an example:
 
 .. code-block:: bash
 
-  # Register the SONG service
-  sudo ln -s $SONG_SERVER_HOME/bin/song-server /etc/init.d/song-server
+   $ docker run -d --rm  \
+      -p "8080:8080" \
+      --restart always \
+      --name song-server-X.X.X \
+      -e "SPRING_PROFILES_ACTIVE=prod,secure,default" \
+      -e "SERVER_PORT=8080" \
+      -e "MANAGEMENT_SERVER_PORT=8081" \
+      -e "AUTH_SERVER_URL=<auth-server-url>/api/o/check_token/" \
+      -e "AUTH_SERVER_CLIENTID=<clientId>" \
+      -e "AUTH_SERVER_CLIENTSECRET=<clientSecret>" \
+      -e "AUTH_SERVER_SCOPE_SYSTEM=song.WRITE" \
+      -e "AUTH_SERVER_SCOPE_STUDY_PREFIX=song-" \
+      -e "AUTH_SERVER_SCOPE_STUDY_SUFFIX=.WRITE" \
+      -e "ID_IDURL=<id-server-url>" \
+      -e "ID_AUTHTOKEN=<id-server-access-token>" \
+      -e "ID_REALIDS=true" \
+      -e "SPRING_DATASOURCE_URL=jdbc:postgresql://<db-url>/song?stringtype=unspecified" \
+      -e "SPRING_DATASOURCE_USERNAME=postgres" \
+      -e "SPRING_DATASOURCE_PASSWORD=password" \
+      -e "SPRING_FLYWAY_LOCATIONS=classpath:db/migration" \
+      -e "SPRING_FLYWAY_ENABLED=true" \
+      -e "SCORE_URL=<score-server-url>" \
+      -e "SCORE_ACCESSTOKEN=<score-access-token-with-download-scope>" \
+      overture/song-server:X.X.X
 
-  # Start on boot (defaults)
-  sudo update-rc.d song-server defaults
-
-It can also be manually managed using serveral commands:
+Alternatively, the above environment variables can be places in a file (below) and then that filepath can be used with the docker run command instead:
 
 .. code-block:: bash
 
-    # Start the service
-    sudo service song-server start
+   $ cat env.list
 
-    # Stop the service
-    sudo service song-server stop
+   SPRING_PROFILES_ACTIVE=prod,secure,default
+   SERVER_PORT=8080
+   MANAGEMENT_SERVER_PORT=8081
+   AUTH_SERVER_URL=<auth-server-url>/api/o/check_token/
+   AUTH_SERVER_CLIENTID=<clientId>
+   AUTH_SERVER_CLIENTSECRET=<clientSecret>
+   AUTH_SERVER_SCOPE_SYSTEM=song.WRITE
+   AUTH_SERVER_SCOPE_STUDY_PREFIX=song-
+   AUTH_SERVER_SCOPE_STUDY_SUFFIX=.WRITE
+   ID_IDURL=<id-server-url>
+   ID_AUTHTOKEN=<id-server-access-token>
+   ID_REALIDS=true
+   SPRING_DATASOURCE_URL=jdbc:postgresql://<db-url>/song?stringtype=unspecified
+   SPRING_DATASOURCE_USERNAME=postgres
+   SPRING_DATASOURCE_PASSWORD=password
+   SPRING_FLYWAY_LOCATIONS=classpath:db/migration
+   SPRING_FLYWAY_ENABLED=true
+   SCORE_URL=<score-server-url>
+   SCORE_ACCESSTOKEN=<score-access-token-with-download-scope>
 
-    # Restart the service
-    sudo service song-server restart
+   $ docker run -d --rm  \
+      -p "8080:8080" \
+      --restart always \
+      --name song-server-X.X.X \
+      --env-file env.list \
+      overture/song-server:X.X.X
 
-.. todo::
+Using docker-compose
+----------------------
 
-    Example SSL Termination with NGINX
-    ====================================
+The server can also be run using docker-compose. Below is an example ``docker-compose.yml`` with only the SONG service definition visible:
+
+.. code-block:: yml
+
+   version: '3.4'
+   services:
+      song-server:
+         image: "overture/song-server:X.X.X"
+         environment:
+            SPRING_PROFILES_ACTIVE: prod,secure,default
+            SERVER_PORT: 8080
+            MANAGEMENT_SERVER_PORT: 8081
+            AUTH_SERVER_URL: <auth-server-url>/api/o/check_token/
+            AUTH_SERVER_CLIENTID: <clientId>
+            AUTH_SERVER_CLIENTSECRET: <clientSecret>
+            AUTH_SERVER_SCOPE_SYSTEM: song.WRITE
+            AUTH_SERVER_SCOPE_STUDY_PREFIX: song-
+            AUTH_SERVER_SCOPE_STUDY_SUFFIX: .WRITE
+            ID_IDURL: <id-server-url>
+            ID_AUTHTOKEN: <id-server-access-token>
+            ID_REALIDS: true
+            SPRING_DATASOURCE_URL: jdbc:postgresql://<db-url>/song?stringtype=unspecified
+            SPRING_DATASOURCE_USERNAME: postgres
+            SPRING_DATASOURCE_PASSWORD: password
+            SPRING_FLYWAY_LOCATIONS: classpath:db/migration
+            SPRING_FLYWAY_ENABLED: true
+            SCORE_URL: <score-server-url>
+            SCORE_ACCESSTOKEN: <score-access-token-with-download-scope>
+         restart: always
+         
+The configured ``docker-compose.yml`` file can then be run with
+
+.. code-block:: bash
+
+   docker-compose -f ./docker-compose.yml up -d song-server
+
+Using Kubernetes and helm charts
+----------------------------------
+
+For deployment onto a Kubernetes cluster, a `song helm chart <https://github.com/overture-stack/helm-charts/tree/master/song>`_ is available.
+The `values.yml <https://github.com/overture-stack/helm-charts/blob/master/song/values.yaml>`_ file must be modified with the correct configurations before deploying.
 
 
-    Installing NGINX
-    -----------------
-
-    sdfsdf
-
-    LetsEncrypt
-    --------------
-
-    sdf
-
-    Configuring NGINX
-    -------------------
-    sdfsd
-
-    Running NGINX as a Service
-    ---------------------------
-    sdfsd

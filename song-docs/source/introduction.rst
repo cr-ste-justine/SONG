@@ -52,11 +52,12 @@ Features
 Data Submission Workflow
 ======================================
 
-The data submission workflow can be separated into 3 main stages:
+The data submission workflow can be separated into 4 main stages:
 
 1. Metadata Submission and Validation (SONG)
-2. Object data Upload (SCORE)
-3. Publishing Metadata (SONG)
+2. Manifest Generation (SONG)
+3. Object data Upload (SCORE)
+4. Publishing Metadata (SONG)
 
 
 The following diagram summarized the steps involved in successful data submission using SONG and SCORE:
