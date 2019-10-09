@@ -28,7 +28,7 @@ Official Releases
 Official SONG release notes can be found `here <https://github.com/overture-stack/SONG/releases>`_.
 The release note labels follow the `symantic versioning specification <https://semver.org/>`_ and contain notes with a description of the bug fixes, new features or enhancements, breaking changes, change logs and Docker image tag names. 
 All official SONG release notes are tagged in the format ``$COMPONENT-$VERSION``, where the ``$COMPONENT`` portion follows the regex ``^[a-z-]+$`` and the ``$VERSION`` component follows ``^\d+\.\d+\.\d+$`` . 
-Sing the SONG server is packaged into a docker image, the officially released docker images can be found at https://dockerhub.org/overture/song-server and are tagged in the format ``$VERSION`` where ``$VERSION`` follows ``^\d+\.\d+\.\d+$``.
+Sing the SONG server is packaged into a docker image, the officially released docker images can be found at https://cloud.docker.com/u/overture/repository/docker/overture/song-server/tags and are tagged in the format ``$VERSION`` where ``$VERSION`` follows ``^\d+\.\d+\.\d+$``.
 
 
 Installation
