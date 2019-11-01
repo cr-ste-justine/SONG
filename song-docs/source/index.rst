@@ -3,11 +3,12 @@ SONG Documentation
 ============================
 
 .. toctree::
-    :maxdepth: 4
+    :maxdepth: 7
 
     introduction.rst
     score-client.rst
     server.rst
+    features/index.rst
     docker.rst
     sdk/index.rst
     existing-instances.rst
