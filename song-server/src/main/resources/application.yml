@@ -53,7 +53,9 @@ spring:
     initialization-mode: always
     hikari:
       connection-timeout: 500
-
+  cloud:
+    vault:
+      enabled: false
 
 # Hibernate SQL Debugging
 #spring.jpa.properties.hibernate.format_sql: true
