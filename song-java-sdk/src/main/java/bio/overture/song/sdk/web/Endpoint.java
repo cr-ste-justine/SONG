@@ -36,6 +36,10 @@ public class Endpoint {
     this.serverUrl = "";
   }
 
+  public String listStudies() {
+    return format("%s/studies/all", serverUrl);
+  }
+
   public String submit(@NonNull String studyId) {
     return format("%s/upload/%s", serverUrl, studyId);
   }

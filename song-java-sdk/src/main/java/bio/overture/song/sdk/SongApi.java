@@ -143,4 +143,9 @@ public class SongApi {
     val url = endpoint.getAnalysisType(name, version, unrenderedOnly);
     return restClient.get(url, AnalysisType.class).getBody();
   }
+
+  public List<String> GetStudies() {
+    val url = endpoint.listStudies();
+    return restClient.getList(url, String.class).getBody();
+  }
 }
