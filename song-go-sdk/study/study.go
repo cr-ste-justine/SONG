@@ -7,6 +7,8 @@ import (
 
 const (
 	getAllStudiesUrl = "/studies/all"
+	createStudyUrl   = `/studies/{{.studyId}}/`
+	getStudy         = `/studies/{{.studyId}}`
 )
 
 func GetAll(cli *client.Client) (*[]string, error) {
@@ -17,4 +19,8 @@ func GetAll(cli *client.Client) (*[]string, error) {
 	}
 	err = json.Unmarshal(*resp, &ids)
 	return &ids, err
+}
+
+func Create(id string, name string, description string, organization string, cli *client.Client) string {
+
 }
