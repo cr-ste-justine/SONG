@@ -25,12 +25,13 @@ import org.testcontainers.shaded.com.google.common.collect.Sets;
 
 public class TestScopeStrategy {
 
-  private static final SystemSecurity SYSTEM_SECURITY = new SystemSecurity("song.READ");
+  private static final SystemSecurity SYSTEM_SECURITY = new SystemSecurity("song.READ", true);
   private static final StudySecurity STUDY_SECURITY1 =
       StudySecurity.builder()
           .studyPrefix("song.")
           .studySuffix(".READ")
           .systemScope("song.READ")
+          .securityIsEnabled(true)
           .build();
 
   private static final StudySecurity STUDY_SECURITY2 =
@@ -38,6 +39,7 @@ public class TestScopeStrategy {
           .studyPrefix("PROGRAMDATA-")
           .studySuffix(".READ")
           .systemScope("song.READ")
+          .securityIsEnabled(true)
           .build();
 
   @Test

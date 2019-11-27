@@ -30,11 +30,12 @@ import org.springframework.security.core.Authentication;
 public class SystemSecurity {
 
   @NonNull private final String systemScope;
+  @NonNull private final boolean securityIsEnabled;
 
   public boolean authorize(@NonNull Authentication authentication) {
     log.info("Checking system-level authorization");
     val grantedScopes = extractGrantedScopes(authentication);
-    return verifyOneOfSystemScope(grantedScopes);
+    return !this.securityIsEnabled || verifyOneOfSystemScope(grantedScopes);
   }
 
   public boolean verifyOneOfSystemScope(@NonNull Set<String> grantedScopes) {

@@ -39,7 +39,6 @@ import org.springframework.validation.annotation.Validated;
 @Setter
 @Component
 @Validated
-@ConditionalOnProperty(value="song.security.enabled", matchIfMissing = true)
 @EnableWebSecurity
 @EnableResourceServer
 @ConfigurationProperties("auth.server")
@@ -48,6 +47,9 @@ public class SecurityConfig extends ResourceServerConfigurerAdapter {
   @Autowired private SwaggerConfig swaggerConfig;
 
   private final ScopeConfig scope = new ScopeConfig();
+
+  @org.springframework.beans.factory.annotation.Value("${song.security.enabled:true}")
+  private boolean securityIsEnabled;
 
   @Override
   @SneakyThrows
@@ -79,7 +81,7 @@ public class SecurityConfig extends ResourceServerConfigurerAdapter {
 
   @Bean
   public SystemSecurity systemSecurity() {
-    return new SystemSecurity(scope.getSystem());
+    return new SystemSecurity(scope.getSystem(), this.securityIsEnabled);
   }
 
   @Bean
@@ -88,6 +90,7 @@ public class SecurityConfig extends ResourceServerConfigurerAdapter {
         .studyPrefix(scope.getStudy().getPrefix())
         .studySuffix(scope.getStudy().getSuffix())
         .systemScope(scope.getSystem())
+        .securityIsEnabled(this.securityIsEnabled)
         .build();
   }
 

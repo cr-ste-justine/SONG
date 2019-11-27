@@ -34,11 +34,12 @@ public class StudySecurity {
   @NonNull private final String studyPrefix;
   @NonNull private final String studySuffix;
   @NonNull private final String systemScope;
+  @NonNull private final boolean securityIsEnabled;
 
   public boolean authorize(@NonNull Authentication authentication, @NonNull final String studyId) {
     log.info("Checking study-level authorization for studyId {}", studyId);
     val grantedScopes = extractGrantedScopes(authentication);
-    return verifyOneOfStudyScope(grantedScopes, studyId);
+    return !this.securityIsEnabled || verifyOneOfStudyScope(grantedScopes, studyId);
   }
 
   public boolean isGrantedForStudy(@NonNull String tokenScope, @NonNull String studyId) {
