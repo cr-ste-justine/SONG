@@ -17,71 +17,57 @@
 
 package bio.overture.song.server.service.id;
 
-import bio.overture.song.server.repository.AnalysisRepository;
+import static com.fasterxml.uuid.Generators.randomBasedGenerator;
+
 import com.fasterxml.uuid.impl.NameBasedGenerator;
 import com.fasterxml.uuid.impl.RandomBasedGenerator;
 import com.google.common.base.Joiner;
+import java.util.Optional;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
-import java.util.Optional;
-
-import static com.fasterxml.uuid.Generators.randomBasedGenerator;
-
+/**
+ * Local implementation of the IdService, that does not require an external REST service for
+ * registering canonical IDs. Uses the database for ID resolution.
+ */
 @Slf4j
-@Service
 public class LocalIdService implements IdService {
 
   /** Constants */
   private static final Joiner COLON = Joiner.on(":");
+
   private static final RandomBasedGenerator RANDOM_UUID_GENERATOR = randomBasedGenerator();
 
   /** Dependencies */
   private final NameBasedGenerator nameBasedGenerator;
-  private final AnalysisRepository analysisRepository;
 
-  @Autowired
-  public LocalIdService(@NonNull NameBasedGenerator nameBasedGenerator,
-      @NonNull AnalysisRepository analysisRepository) {
+  public LocalIdService(@NonNull NameBasedGenerator nameBasedGenerator) {
     this.nameBasedGenerator = nameBasedGenerator;
-    this.analysisRepository = analysisRepository;
   }
 
   @Override
-  public boolean isAnalysisIdExist(@NonNull String analysisId) {
-    return analysisRepository.existsById(analysisId);
-  }
-
-  @Override
-  public String uniqueCandidateAnalysisId() {
+  public String generateAnalysisId() {
     return RANDOM_UUID_GENERATOR.generate().toString();
   }
 
   @Override
-  public void saveAnalysisId(@NonNull String submitterAnalysisId) {
-    log.warn("Skipping analysisId creation for {}", getClass().getSimpleName());
-  }
-
-  @Override
-  public Optional<String> resolveFileId(@NonNull String analysisId, @NonNull String fileName) {
+  public Optional<String> getFileId(@NonNull String analysisId, @NonNull String fileName) {
     return generateId(analysisId, fileName);
   }
 
   @Override
-  public Optional<String> resolveDonorId(@NonNull String studyId, @NonNull String submitterDonorId) {
+  public Optional<String> getDonorId(@NonNull String studyId, @NonNull String submitterDonorId) {
     return generateId(studyId, submitterDonorId);
   }
 
   @Override
-  public Optional<String> resolveSpecimenId(
+  public Optional<String> getSpecimenId(
       @NonNull String studyId, @NonNull String submitterSpecimenId) {
     return generateId(studyId, submitterSpecimenId);
   }
 
   @Override
-  public Optional<String> resolveSampleId(@NonNull String studyId, @NonNull String submitterSampleId) {
+  public Optional<String> getSampleId(@NonNull String studyId, @NonNull String submitterSampleId) {
     return generateId(studyId, submitterSampleId);
   }
 

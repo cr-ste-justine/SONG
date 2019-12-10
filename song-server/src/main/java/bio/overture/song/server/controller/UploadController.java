@@ -17,10 +17,15 @@
 
 package bio.overture.song.server.controller;
 
+import static org.springframework.http.HttpHeaders.AUTHORIZATION;
+import static org.springframework.http.MediaType.APPLICATION_JSON_UTF8_VALUE;
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+
 import bio.overture.song.core.model.SubmitResponse;
 import bio.overture.song.server.service.UploadService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,12 +36,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import javax.validation.Valid;
-
-import static org.springframework.http.HttpHeaders.AUTHORIZATION;
-import static org.springframework.http.MediaType.APPLICATION_JSON_UTF8_VALUE;
-import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 @Slf4j
 @RestController
@@ -57,18 +56,6 @@ public class UploadController {
       @RequestHeader(value = AUTHORIZATION, required = false) final String accessToken,
       @PathVariable("studyId") String studyId,
       @RequestBody @Valid String json_payload) {
-    return uploadService.submit(studyId, json_payload, false);
-  }
-
-  @ApiOperation(value = "ForceSubmit", notes = "Forcefully submit a json payload, ignoring analysisId collisions")
-  @PostMapping(
-      value = "/{studyId}/force",
-      consumes = {APPLICATION_JSON_VALUE, APPLICATION_JSON_UTF8_VALUE})
-  @PreAuthorize("@systemSecurity.authorize(authentication)")
-  public SubmitResponse forceSubmit(
-      @RequestHeader(value = AUTHORIZATION, required = false) final String accessToken,
-      @PathVariable("studyId") String studyId,
-      @RequestBody @Valid String json_payload) {
-    return uploadService.submit(studyId, json_payload, true);
+    return uploadService.submit(studyId, json_payload);
   }
 }
