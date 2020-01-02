@@ -1,3 +1,9 @@
+<h1 align="center">Note About This Fork</h1>
+
+<p align="left">This is a fork of the original SONG repo that is adapted for the needs of the Sainte-Justine research center. For example, we don't use Ego from the Overture stack.</p>
+
+<p align="left">Unless you find youself having needs similar to our own, you should use the original SONG project, which can be found <a href="https://github.com/overture-stack/SONG" target="_blank">here</a></p>
+
 <h1 align="center">Song</h1>
 
 
