@@ -54,29 +54,33 @@ public class SecurityConfig extends ResourceServerConfigurerAdapter {
   @Override
   @SneakyThrows
   public void configure(HttpSecurity http) {
-    http.authorizeRequests()
-        .antMatchers("/health")
-        .permitAll()
-        .antMatchers("/isAlive")
-        .permitAll()
-        .antMatchers("/studies/**")
-        .permitAll()
-        .antMatchers("/upload/**")
-        .permitAll()
-        .antMatchers("/entities/**")
-        .permitAll()
-        .antMatchers("/export/**")
-        .permitAll()
-        .antMatchers("/schemas/**")
-        .permitAll()
-        .antMatchers(swaggerConfig.getAlternateSwaggerUrl())
-        .permitAll()
-        .antMatchers("/swagger**", "/swagger-resources/**", "/v2/api**", "/webjars/**")
-        .permitAll()
-        .and()
-        .authorizeRequests()
-        .anyRequest()
-        .authenticated();
+    if(this.securityIsEnabled) {
+      http.authorizeRequests()
+          .antMatchers("/health")
+          .permitAll()
+          .antMatchers("/isAlive")
+          .permitAll()
+          .antMatchers("/studies/**")
+          .permitAll()
+          .antMatchers("/upload/**")
+          .permitAll()
+          .antMatchers("/entities/**")
+          .permitAll()
+          .antMatchers("/export/**")
+          .permitAll()
+          .antMatchers("/schemas/**")
+          .permitAll()
+          .antMatchers(swaggerConfig.getAlternateSwaggerUrl())
+          .permitAll()
+          .antMatchers("/swagger**", "/swagger-resources/**", "/v2/api**", "/webjars/**")
+          .permitAll()
+          .and()
+          .authorizeRequests()
+          .anyRequest()
+          .authenticated();
+    } else {
+      http.authorizeRequests().anyRequest().permitAll();
+    }
   }
 
   @Bean
