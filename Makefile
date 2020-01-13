@@ -51,7 +51,7 @@ LOG_DIRS := $(SCORE_SERVER_LOGS_DIR) $(SCORE_CLIENT_LOGS_DIR) $(SONG_SERVER_LOGS
 DOCKER_COMPOSE_CMD := echo "*********** DEMO_MODE = $(DEMO_MODE) **************" \
 	&& echo "*********** FORCE = $(FORCE) **************" \
 	&& DOCKERFILE_NAME=$(DOCKERFILE_NAME) MY_UID=$(MY_UID) MY_GID=$(MY_GID) $(DOCKER_COMPOSE_EXE) -f $(ROOT_DIR)/docker-compose.yml
-SONG_CLIENT_CMD := $(DOCKER_COMPOSE_CMD) run --rm -u $(THIS_USER) song-client bin/sing
+SONG_CLIENT_CMD := $(DOCKER_COMPOSE_CMD) run --rm -u $(THIS_USER) song-client sing
 SCORE_CLIENT_CMD := $(DOCKER_COMPOSE_CMD) run --rm -u $(THIS_USER) score-client bin/score-client
 DC_UP_CMD := $(DOCKER_COMPOSE_CMD) up -d --build
 MVN_CMD := $(MVN_EXE) -f $(ROOT_DIR)/pom.xml
@@ -81,6 +81,11 @@ _ping_song_server:
 		--retry-max-time 40 \
 		--retry-connrefuse \
 		'http://localhost:8080/isAlive'
+	@echo ""
+
+_ping_song_db:
+	@echo $(YELLOW)$(INFO_HEADER) "Pinging song-db on localhost:8432" $(END)
+	@$(RETRY_CMD) $(DOCKER_COMPOSE_EXE) exec song-db psql -U postgres song -c 'select 1' 
 	@echo ""
 
 
@@ -171,6 +176,26 @@ clean-output-dirs:
 clean: clean-docker clean-mvn clean-log-dirs clean-output-dirs
 
 #############################################################
+#  Flyway and Database Related targets
+#############################################################
+
+refresh-db:
+	@echo $(YELLOW)$(INFO_HEADER) "Refreshing song-db" $(END)
+	@$(DOCKER_COMPOSE_CMD) kill song-db song-server
+	@$(DOCKER_COMPOSE_CMD) rm -f song-db
+	@$(DOCKER_COMPOSE_CMD) up -d song-db
+
+migrate: clean-mvn package refresh-db _ping_song_db
+	@$(MVN_CMD) -X -pl song-server flyway:migrate \
+		-Dflyway.user=postgres \
+		-Dflyway.password=password \
+		-Dflyway.url=jdbc:postgresql://localhost:8432/song?stringtype=unspecified \
+		-Dflyway.locations=classpath:db/migration
+
+login-db:
+	@$(DOCKER_COMPOSE_CMD) exec song-db psql -U postgres song
+
+#############################################################
 #  Building targets
 #############################################################
 
@@ -238,8 +263,8 @@ get-analysis-id:
 test-submit: start-song-server _ping_song_server
 	@echo $(YELLOW)$(INFO_HEADER) "Submitting payload /data/submit/exampleVariantCall.json" $(END)
 	@$(SONG_CLIENT_CMD) submit -f /data/submit/exampleVariantCall.json | tee $(SONG_CLIENT_SUBMIT_RESPONSE_FILE)
-	@cat $(SONG_CLIENT_SUBMIT_RESPONSE_FILE) | grep analysisId | sed 's/.*://' | sed 's/"\|,//g'  > $(SONG_CLIENT_ANALYSIS_ID_FILE)
-	@echo $(YELLOW)$(INFO_HEADER) "Successfully submitted. Cached analysisId: " $$($(GET_ANALYSIS_ID_CMD)) $(END)
+	@cat $(SONG_CLIENT_SUBMIT_RESPONSE_FILE) | grep analysisId | sed -e 's#.*:[^"]*"\([^"]*\)".*#\1#' > $(SONG_CLIENT_ANALYSIS_ID_FILE)
+	@echo $(YELLOW)$(INFO_HEADER) "Successfully submitted. Cached analysisId: '"$$($(GET_ANALYSIS_ID_CMD))"'" $(END)
 
 test-manifest: test-submit
 	@echo $(YELLOW)$(INFO_HEADER) "Creating manifest at /song-client/output" $(END)
