@@ -209,6 +209,7 @@ public class AnalysisService {
           val id = a.getAnalysisId();
           a.setFiles(unsecuredReadFiles(id));
           a.setSamples(readSamples(id));
+          log.info("Analysis '{}' has state '{}'", id, a.getAnalysisState());
         });
     return analyses;
   }
@@ -323,6 +324,7 @@ public class AnalysisService {
     val file2storageObjectMap = getStorageObjectsForFiles(files);
     checkMismatchingFileSizes(id, file2storageObjectMap);
     checkMismatchingFileMd5sums(id, file2storageObjectMap, ignoreUndefinedMd5);
+    log.info("Publishing analysis '{}'", id);
     checkedUpdateState(id, PUBLISHED);
     return ok("AnalysisId %s successfully published", id);
   }

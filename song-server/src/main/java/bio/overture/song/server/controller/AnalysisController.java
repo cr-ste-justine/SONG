@@ -49,6 +49,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/studies/{studyId}/analysis")
@@ -82,6 +85,12 @@ public class AnalysisController {
       @ApiParam(value = "Non-empty comma separated list of analysis states to filter by")
           @RequestParam(value = "analysisStates", defaultValue = "PUBLISHED", required = false)
           String analysisStates) {
+    val analyses = analysisService.getAnalysis(studyId, ImmutableSet.copyOf(COMMA.split(analysisStates)));
+    analyses.forEach(
+        a -> {
+          val id = a.getAnalysisId();
+          log.info("Analysis '{}' has state '{}'", id, a.getAnalysisState());
+        });
     return analysisService.getAnalysis(studyId, ImmutableSet.copyOf(COMMA.split(analysisStates)));
   }
 

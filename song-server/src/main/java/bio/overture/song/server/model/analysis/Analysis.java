@@ -31,6 +31,7 @@ import bio.overture.song.server.model.enums.TableAttributeNames;
 import bio.overture.song.server.model.enums.TableNames;
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.List;
 import java.util.Map;
 import javax.persistence.Column;
@@ -67,7 +68,7 @@ public class Analysis {
   private String studyId;
 
   @Column(name = TableAttributeNames.STATE, nullable = false)
-  private String analysisState = UNPUBLISHED.name();
+  private String analysisState;
 
   @NotNull
   @JsonIgnore
@@ -97,7 +98,13 @@ public class Analysis {
     return toMap(JsonUtils.toJson(analysisData.getData()));
   }
 
+  @JsonProperty("analysisState")
   public void setAnalysisState(String state) {
     this.analysisState = resolveAnalysisState(state).toString();
+  }
+
+  @JsonProperty("analysisState")
+  public String getAnalysisState() {
+    return this.analysisState;
   }
 }
