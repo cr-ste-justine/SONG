@@ -52,6 +52,10 @@ import lombok.NoArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.ToString;
 
+import java.lang.reflect.*;
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 @Data
 @Entity
 @Builder
@@ -106,5 +110,21 @@ public class Analysis {
   @JsonProperty("analysisState")
   public String getAnalysisState() {
     return this.analysisState;
+  }
+
+  public void printMembers() {
+    Class thisClass = this.getClass();
+
+    log.info("Printing analysis methods");
+    Method[] thisMethods = thisClass.getDeclaredMethods();
+    for(int i = 0; i < thisMethods.length; i++) {
+      log.info("method = " + thisMethods[i].toString());
+    }
+
+    log.info("Printing analysis fields");
+    Field[] thisFields = thisClass.getDeclaredFields();
+    for(int i = 0; i < thisFields.length; i++) {
+      log.info("Field = " + thisFields[i].toString());
+    }
   }
 }

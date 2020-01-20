@@ -50,6 +50,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import lombok.extern.slf4j.Slf4j;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.core.JsonProcessingException;
 
 @Slf4j
 @RestController
@@ -90,7 +92,15 @@ public class AnalysisController {
         a -> {
           val id = a.getAnalysisId();
           log.info("Analysis '{}' has state '{}'", id, a.getAnalysisState());
+          a.printMembers();
+          try {
+            String serialization = new ObjectMapper().writeValueAsString(a);
+            log.info("Serialization: '{}'", serialization);
+          } catch (JsonProcessingException e) {
+            log.info("Could not serialize!");
+          }
         });
+    
     return analysisService.getAnalysis(studyId, ImmutableSet.copyOf(COMMA.split(analysisStates)));
   }
 
