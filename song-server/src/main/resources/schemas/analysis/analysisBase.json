@@ -31,7 +31,11 @@
 					"XML",
 					"TGZ",
 					"CRAM",
-					"CRAI"
+					"CRAI",
+					"TXT",
+					"HTML",
+					"TSV",
+					"CSV"
 				]
 			},
 			"fileData" :{
@@ -120,7 +124,8 @@
 					"Spleen",
 					"Bone",
 					"Cerebellum",
-					"Endometrium"
+					"Endometrium",
+					"Blood specimen"
 				]
 			},
 			"specimenType": {
@@ -193,7 +198,8 @@
 					"Total RNA",
 					"Ribo-Zero RNA",
 					"polyA+ RNA",
-					"Other RNA fractions"
+					"Other RNA fractions",
+					"Deoxyribonucleic acid"
 				]
 			},
 			"sampleData": {

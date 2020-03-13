@@ -59,7 +59,11 @@
                 "VCF",
                 "TBI",
                 "IDX",
-                "XML"
+                "XML",
+                "TXT",
+                "HTML",
+                "TSV",
+                "CSV"
               ]
             }
           }

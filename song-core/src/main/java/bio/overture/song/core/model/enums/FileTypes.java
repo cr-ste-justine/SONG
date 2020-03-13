@@ -35,7 +35,11 @@ public enum FileTypes {
   TBI("tbi"),
   IDX("idx"),
   XML("xml"),
-  TGZ("tgz");
+  TGZ("tgz"),
+  TXT("txt"),
+  HTML("html"),
+  TSV("tsv"),
+  CSV("csv");
 
   @Getter private final String extension;
 
