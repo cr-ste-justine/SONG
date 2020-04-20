@@ -44,3 +44,7 @@ CMD mkdir -p  $SONG_HOME $SONG_LOGS \
         && java -Dlog.path=$SONG_LOGS \
         -jar $JAR_FILE \
         --spring.config.location=classpath:/bootstrap.properties,classpath:/application.yml
+
+COPY song-server/isAlive.sh /opt/isAlive.sh
+
+HEALTHCHECK --interval=10s --timeout=10s --start-period=30s --retries=3 CMD /opt/isAlive.sh
