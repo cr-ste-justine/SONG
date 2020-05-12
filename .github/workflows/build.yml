@@ -9,4 +9,4 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - name: Ensure we can build the image
-      run: (cd src; docker build -t test:test .)
+      run: docker build -t test:test .
