@@ -1,3 +1,7 @@
+![](https://github.com/cr-ste-justine/song/workflows/Build/badge.svg)
+![](https://github.com/cr-ste-justine/song/workflows/Publish/badge.svg)
+
+
 <h1 align="center">Note About This Fork</h1>
 
 <p align="left">This is a fork of the original SONG repo that is adapted for the needs of the Sainte-Justine research center. For example, we don't use Ego from the Overture stack.</p>
