@@ -43,6 +43,7 @@ WORKDIR $SONG_HOME
 CMD mkdir -p  $SONG_HOME $SONG_LOGS \
         && java -Dlog.path=$SONG_LOGS \
         -jar $JAR_FILE \
+		-Xmx3072m -XX:MetaspaceSize=96M -XX:MaxMetaspaceSize=256m \
         --spring.config.location=classpath:/bootstrap.properties,classpath:/application.yml
 
 COPY song-server/isAlive.sh /opt/isAlive.sh
